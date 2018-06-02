@@ -2,28 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using MgsCommonLib.Animation;
+using MgsCommonLib.UI;
 using MgsCommonLib.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MgsAvatar
 {
-    [RequireComponent(typeof(Toggle))]
-    public class MgsAvatarFeatureButton : MonoBehaviour
+    public class MgsAvatarFeatureButton : MgsUIToggle
     {
         public List<Image> Images;
-
-        private bool _isSelected;
-
+        
         private void Start()
         {
-            var toggle = GetComponent<Toggle>();
+            base.Start();
 
-            toggle.onValueChanged.AddListener(Select);
-
-            _isSelected = toggle.isOn;
-
-            if (_isSelected)
+            if (IsOn)
             {
                 // Active feature images
                 Images.ForEach(image => image.gameObject.SetActive(true));
@@ -31,16 +25,9 @@ namespace MgsAvatar
                 // Deactivate sibling images
                 GetSiblingImages().ForEach(image => image.gameObject.SetActive(false));
             }
+            OnActivate.AddListener(() => StartCoroutine(ActivateImages()));
         }
-
-        public void Select(bool value)
-        {
-            if (value && !_isSelected)
-                StartCoroutine(ActivateImages());
-
-            _isSelected = value;
-        }
-
+        
         private IEnumerator ActivateImages()
         {
             // Get Fade in images
