@@ -5,6 +5,7 @@ using MgsCommonLib.Animation;
 using MgsCommonLib.UI;
 using MgsCommonLib.Utilities;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace MgsAvatar
@@ -35,7 +36,8 @@ namespace MgsAvatar
             List<Image> fadeOutImages = GetSiblingImages();
 
             // Disable Interaction during animation
-            AvatarWindow.DisableInteraction();
+            var eventSystem = EventSystem.current;
+            eventSystem.enabled = false;
 
             // Enable FadeIn Images
             fadeInImages.ForEach(fiImage => fiImage.gameObject.SetActive(true));
@@ -58,7 +60,8 @@ namespace MgsAvatar
             fadeOutImages.ForEach(foImage => foImage.gameObject.SetActive(false));
 
             // Enable Interaction during animation
-            AvatarWindow.EnableInteraction();
+            eventSystem.enabled = true;
+            
         }
 
         private List<Image> GetSiblingImages()

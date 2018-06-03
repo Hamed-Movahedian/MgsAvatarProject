@@ -5,23 +5,18 @@ using UnityEngine;
 public class MgsAvatarEditorWindow : MonoBehaviour
 {
     public float TransitionDuration = 1;
+    public RectTransform ImageRoot;
 
-    #region Canvas Group
-    private CanvasGroup _canvasGroup;
 
-    public CanvasGroup CanvasGroup
+    #region Instance
+
+    private static MgsAvatarEditorWindow _instance;
+
+    public static MgsAvatarEditorWindow Instance
     {
-        get { return _canvasGroup ?? GetComponent<CanvasGroup>(); }
+        get { return _instance ?? FindObjectOfType<MgsAvatarEditorWindow>(); }
     }
+
     #endregion
 
-    public void DisableInteraction()
-    {
-        CanvasGroup.interactable = false;
-    }
-
-    public void EnableInteraction()
-    {
-        CanvasGroup.interactable = true;
-    }
 }
