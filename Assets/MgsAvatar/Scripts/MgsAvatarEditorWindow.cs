@@ -48,7 +48,7 @@ public class MgsAvatarEditorWindow : MonoBehaviour
     public void Start()
     {
         // Get images of all features as matrix
-        _images = transform
+        _images = ImageRoot
             .GetChilds()
             .Select(child => child.GetComponentsInChildren<Image>(true))
             .ToArray();

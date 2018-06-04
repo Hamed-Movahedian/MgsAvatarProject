@@ -97,8 +97,10 @@ public class MgsAvatarSample : MonoBehaviour
 
     void Start()
     {
-        //******************   Initialize images and rectTransforms
+        // **********************  Cache Avatar window image root
+        _avatarWindow = MgsAvatarEditorWindow.Instance;
 
+        //******************   Initialize images and rectTransforms
         // Get RectTransform
         _rectTransforms = transform
             .GetChilds()                                                    // get first childs
@@ -117,9 +119,6 @@ public class MgsAvatarSample : MonoBehaviour
             Debug.LogError("Avatar sample " + name + " is Invalid !! (Initialization required)");
             return;
         }
-
-        // **********************  Cache Avatar window image root
-        _avatarWindow = MgsAvatarEditorWindow.Instance;
     }
 
     #endregion
