@@ -1,15 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MgsCommonLib.UI;
 using MgsCommonLib.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MgsAvatarSample : MonoBehaviour
 {
+    [HideInInspector]
+    public List<int> FeatureValues;
+
     private List<RectTransform> _rectTransforms;
     private List<Image> _images;
     private MgsAvatarEditorWindow _avatarWindow;
+    private MgsUIWindow _parentWindow;
 
     #region Editor tools
 
@@ -18,6 +23,9 @@ public class MgsAvatarSample : MonoBehaviour
     [ContextMenu("Initialize")]
     public void Initialize()
     {
+        // Initialize sample and avatar window
+        MgsAvatarEditorWindow.Instance.Start();
+
         // Cleanup - Destroy all children
         transform.DeleteAllChilds();
 
@@ -51,6 +59,7 @@ public class MgsAvatarSample : MonoBehaviour
             // Set rect transform of copy to original
             copyRT.localPosition = originalRT.localPosition;
             copyRT.localScale = originalRT.localScale;
+            copyRT.sizeDelta = originalRT.sizeDelta;
 
             // Delete Extra children so that only one child remains
             while (copyRT.childCount>1)
@@ -64,8 +73,13 @@ public class MgsAvatarSample : MonoBehaviour
 
             // Set the only child name to name of his parent
             copyRT.GetChild(0).name = copyRT.name;
+
+
         }
 
+        Start();
+        // Set current Editor values
+        SetFeatureValues(_avatarWindow.GetFeatureValues());
 
     }
     #endregion
@@ -91,8 +105,7 @@ public class MgsAvatarSample : MonoBehaviour
     #endregion
 
     #endregion
-
-
+    
     #region Start
 
     void Start()
@@ -119,6 +132,9 @@ public class MgsAvatarSample : MonoBehaviour
             Debug.LogError("Avatar sample " + name + " is Invalid !! (Initialization required)");
             return;
         }
+
+        // Get parent window
+        _parentWindow = GetComponentInParent<MgsUIWindow>();
     }
 
     #endregion
@@ -127,10 +143,44 @@ public class MgsAvatarSample : MonoBehaviour
 
     public void SetFeatureValues(List<int> featureValues)
     {
+        FeatureValues = featureValues;
         for (int i = 0; i < _avatarWindow.FeatureCount; i++)
-            _avatarWindow.GetFeature(i, featureValues[i], _rectTransforms[i], _images[i]);
+            _avatarWindow.SetFeature(i, featureValues[i], _rectTransforms[i], _images[i]);
     }
 
+
+    #endregion
+
+    #region Edit - Edit in avatar editor
+
+    public void Edit()
+    {
+        StartCoroutine(EditCoroutine());
+    }
+
+    private IEnumerator EditCoroutine()
+    {
+        // Hide this window if exist
+        if (_parentWindow)
+            yield return _parentWindow.Hide();
+
+        Debug.Log("End");
+
+
+        // Set editor window to this sample feature values
+        _avatarWindow.SetFeatureValues(FeatureValues);
+
+        // Wait for edit
+        yield return _avatarWindow.ShowWaitForCloseHide();
+
+        // Get values
+        SetFeatureValues(_avatarWindow.GetFeatureValues());
+
+        // Show this window if exist
+        if (_parentWindow)
+            yield return _parentWindow.Show();
+
+    }
 
     #endregion
 
